@@ -1,5 +1,6 @@
 import re
 import os
+import argparse
 
 def search_in_file(pattern, file_path, case_insensitive=False, exclude=False, only_count=False):
     matches = 0
@@ -32,3 +33,25 @@ def search_in_directory(pattern, folder_path, case_insensitive=False, exclude=Fa
 
     if only_count:
         print(f"Total matches across all files: {total_matches}")
+
+def main():
+    parser = argparse.ArgumentParser(description="A simple grep-like tool in Python.")
+    parser.add_argument("pattern", help="The text or regex pattern to search for.")
+    parser.add_argument("path", help="The file or folder to search in.")
+    parser.add_argument("-ignoreCase", action="store_true", help="Make the search case insensitive.")
+    parser.add_argument("-exclude", action="store_true", help="Find lines that do not match the pattern.")
+    parser.add_argument("-count", action="store_true", help="Count matches instead of showing them.")
+
+    args = parser.parse_args()
+
+    if os.path.isfile(args.path):
+        matches = search_in_file(args.pattern, args.path, args.ignoreCase, args.exclude, args.count)
+        if args.count:
+            print(f"{args.path}: {matches}")
+    elif os.path.isdir(args.path):
+        search_in_directory(args.pattern, args.path, args.ignoreCase, args.exclude, args.count)
+    else:
+        print("Invalid path. Please provide a valid file or folder.")
+
+if __name__ == "__main__":
+    main()
